@@ -5,13 +5,9 @@ import torch
 import importlib
 import os
 
-# If CUDA is available, use GPU; otherwise fallback to CPU for PyTorch operations
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Define the transparent "void" pixel
 void = (0, 0, 0, 255)
-
-# ------- Core utility functions -------
 
 def generate_raw_texture(width, height, output_path='tex/random_texture.png'):
     if width > 255 or height > 255:
@@ -129,7 +125,6 @@ def MCWallpaper_Replace(wallpaper_folder, outputfolder, your_skin, have_eyes=1,
     }
     out = lambda name: os.path.join(outputfolder, f"{name}.png")
 
-    # Process eyes
     if have_eyes:
         eyes_mod = importlib.import_module(eye_color_file)
         def_mod = importlib.import_module('eye_colors')
@@ -155,7 +150,6 @@ def MCWallpaper_Replace(wallpaper_folder, outputfolder, your_skin, have_eyes=1,
             out('changed_eyes.shadow')
         )
 
-    # Process body and hat
     for part, ck, ak, ik, ak2 in [
         ('body', 'body_color', 'body_alpha', 'illum_body', 'ao_body'),
         ('hat', 'hat_color', 'hat_alpha', 'illum_hat', 'ao_hat')
@@ -182,7 +176,6 @@ def MCWallpaper_Replace(wallpaper_folder, outputfolder, your_skin, have_eyes=1,
             out(f'changed_{part}.shadow')
         )
 
-    # Generate transparent composites for full, fullillum, fullshadow
     for phase in ['', '.illum', '.shadow']:
         canv = Image.new('RGBA', Image.open(out(f'changed_body{phase}')).size, (0,0,0,0))
         files = []
@@ -193,15 +186,11 @@ def MCWallpaper_Replace(wallpaper_folder, outputfolder, your_skin, have_eyes=1,
             part = Image.open(fpath).convert('RGBA')
             canv.paste(part, (0,0), part)
         canv.save(out(f'full{phase}'))
-
-    # Create full_image: background -> body illum -> hat illum -> eyes illum
     base = Image.open(os.path.join(wallpaper_folder, layers['background'])).convert('RGBA')
-    for layer in [out('changed_body.illum'), out('changed_hat.illum')] + ([out('changed_eyes.illum')] if have_eyes else []):
+    for layer in [out('changed_body.shadow'), out('changed_hat.shadow')] + ([out('changed_eyes.shadow')] if have_eyes else []):
         img_part = Image.open(layer).convert('RGBA')
         base.paste(img_part, (0,0), img_part)
     base.save(out('full_image'))
-
-    # Edge detection
     for phase in ['', '.shadow']:
         edge_detection(
             out(f'full{phase}'),
