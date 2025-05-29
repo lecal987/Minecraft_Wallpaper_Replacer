@@ -33,7 +33,7 @@ Please note that this tool is suitable for renderings where:
 3. Make sure you have python and pip installed
 4. install the requirements
    ```bash
-   python requirements.py
+   pip install -r requirements.txt
    ```
 
 ## Usage
@@ -53,7 +53,7 @@ Please note that this tool is suitable for renderings where:
 4. That's all!
    For example, by running
    ```bash
-   python Run_MCR.py --wallpaper_path='wallpaper/Rep_test/Alex_1eyes' --output_path='output/olozhika' --yourskin='tex/olozhika472_NMO.png'
+   python Run_MCR.py --wallpaper_path=wallpaper/Rep_test/Alex_1eyes --output_path=output/olozhika --yourskin=tex/olozhika472_NMO.png
    ```
    one will get
    ![image](https://github.com/olozhika/Minecraft_Wallpaper_Replacer/blob/main/Images_used_in_README/snap2023-10-13%20110459.png)
